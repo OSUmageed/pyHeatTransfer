@@ -10,6 +10,11 @@ import SolidProp as solid
 
 g = 9.81
 
+def rTransfer():
+    
+    #and taht's essentially it.
+    return ep*sig*A*(T**4-Ta**4) 
+
 def colebrook(Re, e, D, f):
     g = e/(D*3.7) + 2.51/(Re*np.sqrt(f))
     fn = -1.0/(2.0*np.log10(g)) 
