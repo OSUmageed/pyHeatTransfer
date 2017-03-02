@@ -11,7 +11,6 @@ import collections
 from deco import concurrent, synchronized
 
 thispath = op.abspath(op.dirname(__file__))
-#plotpath = op.join(thispath, 'images') should be for property
 
 #Pattern should be dict sp[material][property] = [[T, val]] 2D numpy
 #Would be better to store thermal diffusivity too.
@@ -38,14 +37,13 @@ def step_forward(Tg_in, Tg_out, Pg, dt_ds):
 @synchronized
 def forward_call(Tg_in, Tg_out, Pg, dt, ds):
     pass
-        
 
 #could use scipy interpolate to do a spline.  This is limited to just linear.
 class SolidProperties(object):
     props = ['K', 'CP', 'D']
     def __init__(self, mat, Tgrid):
-        self.pRange = sp(mat)
-        self.epsilon = sp(mat)['E']
+        self.pRange = sp.get_props(mat)
+        self.epsilon = sp.get_props(mat)['E']
         self.pGrid = collections.defaultdict()
         self.update_props(Tgrid)
         
