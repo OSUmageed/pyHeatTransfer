@@ -12,13 +12,12 @@ from deco import concurrent, synchronized
 
 thispath = op.abspath(op.dirname(__file__))
 
-#Pattern should be dict sp[material][property] = [[T, val]] 2D numpy
 #Would be better to store thermal diffusivity too.
 #Would be much better to have a function in a dict for each point in SolidProperties.
 #Or at least in a separate funciton.
 
 def make_grid(nx, ny, nz, Ti):
-    gr = [[[(x,y,z) for x in range(nx)] for y in range(ny)] for z in range(nz)]
+    gr = [(x,y,z) for x in range(nx) for y in range(ny) for z in range(nz)]
     Tmake = {g : Ti for g in gr} 
     return Tmake
     
@@ -26,8 +25,8 @@ def make_grid(nx, ny, nz, Ti):
 def step_forward(Tg_in, Tg_out, Pg, dt_ds):
     st_make = np.array([[1,0,0], [-1,0,0], [0,1,0], [0,-1,0], [0,0,1], [0,0,-1]])
     for gridpt in Tg_in.key():
-        Fo = dt_ds*Pg['K']/(Pg['CP']*Pg['D'])
-        stencil = [tuple(gb) for gb in np.array(gridpt)+st_make]
+        Fo = dt_ds*Pg['A']
+        stencil = [tuple(gb) for gb in np.array(gridpt) + st_make]
         if 0 in gridpt:
             pass
             #boundary condition
@@ -40,26 +39,17 @@ def forward_call(Tg_in, Tg_out, Pg, dt, ds):
 
 #could use scipy interpolate to do a spline.  This is limited to just linear.
 class SolidProperties(object):
-    props = ['K', 'CP', 'D']
-    def __init__(self, mat, Tgrid):
-        self.pRange = sp.get_props(mat)
-        self.epsilon = sp.get_props(mat)['E']
-        self.pGrid = collections.defaultdict()
+    def __init__(self, mat, Tgrid, epsil):
+        self.props = sp.get_props(mat)
+        self.epsilon = epsil
+        self.pGrid = collections.defaultdict(dict)
         self.update_props(Tgrid)
         
     def update_props(self, Tgrid):
-        for pt in self.pGrid:
-            for prop in self.props:
-                self.pGrid[pt][prop] = np.interp(Tgrid[pt], self.pRange[prop][0, :], 
-                                       self.pRange[prop][:, 1])
+        for pt in Tgrid.keys():
+            for prop in self.props.keys():
+                self.pGrid[pt][prop] = np.interp(Tgrid[pt], self.props[prop][0, :], self.props[prop][1, :])
             
-            
-        
-        
-        
-        
-    
-    
-
-
+if __name__ == "__main__":
+    print("Pass")
 
