@@ -1,0 +1,113 @@
+#:kivy 1.9.1
+
+<MyButton@Button>:
+    text_size: self.size
+    font_size: '25sp'
+    markup: True
+    halign: 'center'
+    valign: 'middle'
+
+<MyText@TextInput>:
+    text_size: self.size
+    font_size: '25sp'
+    markup: True
+    cursor_blink: True
+    write_tab: False
+    input_filter: 'float'
+
+<MyLabel@Label>:
+    text_size: self.size
+    font_size: '15sp'
+    markup: True
+    halign: 'right'
+    valign: 'middle'
+
+<ScatterTextWidget>:
+    orientation: 'vertical'
+    canvas:
+        Color: 
+            rgba: 0.05,0.7,0.24,0.9
+        Rectangle:
+            pos: self.pos
+            size: self.size
+
+    BoxLayout:
+        orientation: 'vertical'
+        GridLayout:
+            rows: 1
+            cols: 2
+            padding: 5
+
+            GridLayout:
+                cols: 6
+                rows: 3
+                padding: 5
+                spacing: 10
+                row_default_height: 40
+                row_force_default: True
+                size_hint_x: 0.9
+
+                MyLabel:
+                    text: 'Ti'
+                MyText:
+                    id: sz
+                    text: '5'
+                    on_focus: sz2.text = str(float(sz.text)*float(sz2.text))
+
+                MyLabel:
+                    text: 'To'
+                MyText:
+                    id: sz2
+                    text: '50'
+                    on_focus: sz.text = str(float(sz.text)*float(sz2.text))
+
+                MyLabel:
+                    text: 'Epsilon'
+                MyText:
+                    id: sz3
+                    text: '5'
+                    on_focus: sz2.text = str(float(sz.text)*float(sz2.text))
+
+                MyLabel:
+                    text: 'Ton'
+                MyText:
+                    id: sz3
+                    text: '50'
+                    on_focus: sz.text = str(float(sz.text)*float(sz2.text))
+
+                MyLabel:
+                    text: 'Ignore radiation?'
+                CheckBox:
+                    state: 'down'
+
+            GridLayout:
+                cols: 1
+                rows: 3
+                row_default_height: 40
+                row_force_default: True
+                size_hint_x: .15
+                MyButton:
+                    text: "Start"
+                MyButton:
+                    text: "Stop"
+                MyButton:
+                    text: "Pause"
+                    on_press: root.printChildren()        
+
+        GridLayout:
+            cols: 2
+            rows: 1
+            Label:
+                id: shown
+                text: 'Called it'
+                font_size: 50
+                color: [1,0,0]
+
+            Label:
+                id: shown
+                text: 'Called it'
+                font_size: 50
+                color: [1,0,0]
+
+
+                
