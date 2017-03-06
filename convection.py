@@ -10,10 +10,9 @@ import SolidProp as solid
 
 g = 9.81
 
-def rTransfer():
-    
-    #and taht's essentially it.
-    return ep*sig*A*(T**4-Ta**4) 
+def ambientQ(T, Ta, A, h, ep):
+    sig = 5.67e-8
+    return (h*A*np.abs(T-Ta) + ep*sig*A*np.abs(T**4-Ta**4))
 
 def colebrook(Re, e, D, f):
     g = e/(D*3.7) + 2.51/(Re*np.sqrt(f))
@@ -22,7 +21,6 @@ def colebrook(Re, e, D, f):
         return colebrook(Re, e, D, fn) 
     else:
         return fn
-    
 
 class Fluid(object):
     def __init__(self, Tref, Pref, media):
@@ -35,12 +33,11 @@ class Fluid(object):
         self.muu = cp.PropsSI('V', 'P', Pref, 'T', Tref, media) 
         self.nuu = self.rho/self.muu     
         self.Pr = cp.PropsSI('Pr', 'P', Pref, 'T', Tref, media) 
-        
+
+
 class Forced(Fluid):
     
     pass
-
-
 
 class Free(Fluid):
     

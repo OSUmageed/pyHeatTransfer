@@ -1,3 +1,5 @@
+from setuptools import *
+
 try:
     from setuptools import setup
 except ImportError:
