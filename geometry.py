@@ -24,172 +24,173 @@ tags = defaultdict(dict)
 # CORNERS
 # Outside top corners
 loc = 'ESU'
-tags[loc]['Stencil'] = [[1],[1],[-1]] 
+tags[loc]['Stencil'] = [[1,0,0], [0,1,0], [0,0,-1]] 
 tags[loc]['Vc'] = f8
-tags[loc]['Acond'] = [[f4],[f4],[f4]] 
+tags[loc]['Acond'] = [f4, f4, f4] 
 tags[loc]['Aconv'] = [f2 + f4] 
 
 loc = 'ENU'
-tags[loc]['Stencil'] = [[1],[-1],[-1]] 
+tags[loc]['Stencil'] = [[1,0,0], [0,-1,0], [0,0,-1]]  
 tags[loc]['Vc'] = f8
-tags[loc]['Acond'] = [[f4],[f4],[f4]] 
+tags[loc]['Acond'] = [f4, f4, f4] 
 tags[loc]['Aconv'] = [f2 + f4] 
 
 loc = 'WNU'
-tags[loc]['Stencil'] = [[-1],[-1],[-1]] 
+tags[loc]['Stencil'] = [[-1,0,0],[0,-1,0],[0,0,-1]] 
 tags[loc]['Vc'] = f8
-tags[loc]['Acond'] = [[f4],[f4],[f4]] 
+tags[loc]['Acond'] = [f4, f4, f4]  
 tags[loc]['Aconv'] = [f2 + f4] 
 
 loc = 'WSU'
-tags[loc]['Stencil'] = [[-1],[1],[-1]] 
+tags[loc]['Stencil'] = [[-1,0,0],[0,1,0],[0,0,-1]] 
 tags[loc]['Vc'] = f8
-tags[loc]['Acond'] = [[f4],[f4],[f4]] 
+tags[loc]['Acond'] = [f4, f4, f4] 
 tags[loc]['Aconv'] = [f2 + f4] 
 
 #Outside bottom corners
 loc = 'ESB'
-tags[loc]['Stencil'] = [[1],[1],[1]] 
+tags[loc]['Stencil'] = [[1,0,0], [0,1,0], [0,0,1]] 
 tags[loc]['Vc'] = f8
-tags[loc]['Acond'] = [[f4],[f4],[f4]] 
+tags[loc]['Acond'] = [f4, f4, f4]  
 tags[loc]['Aconv'] = [f2 + f4] 
 
 loc = 'ENB'
-tags[loc]['Stencil'] = [[1],[-1],[1]] 
+tags[loc]['Stencil'] = [[1,0,0], [0,-1,0], [0,0,1]] 
 tags[loc]['Vc'] = f8
-tags[loc]['Acond'] = [[f4],[f4],[f4]] 
+tags[loc]['Acond'] = [f4, f4, f4]  
 tags[loc]['Aconv'] = [f2 + f4] 
 
 loc = 'WNB'
-tags[loc]['Stencil'] = [[-1],[-1],[1]] 
+tags[loc]['Stencil'] = [[-1,0,0], [0,-1,0], [0,0,1]] 
 tags[loc]['Vc'] = f8
-tags[loc]['Acond'] = [[f4],[f4],[f4]] 
+tags[loc]['Acond'] = [f4, f4, f4]  
 tags[loc]['Aconv'] = [f2 + f4] 
 
 loc = 'WSB'
-tags[loc]['Stencil'] = [[-1],[1],[1]] 
+tags[loc]['Stencil'] = [[-1,0,0], [0,1,0], [0,0,1]] 
 tags[loc]['Vc'] = f8
-tags[loc]['Acond'] = [[f4],[f4],[f4]] 
+tags[loc]['Acond'] = [f4, f4, f4]  
 tags[loc]['Aconv'] = [f2 + f4] 
 
 #EDGES
-
+#----------------------------------------------
 # Ouside vertical edges
 loc = 'ES'
-tags[loc]['Stencil'] = [[1],[1], [1,-1]] 
+tags[loc]['Stencil'] = [[1,0,0], [0,1,0], [0,0,1], [0,0,-1]] 
 tags[loc]['Vc'] = f4
-tags[loc]['Acond'] = [[f2], [f2], [f4, f4]] 
+tags[loc]['Acond'] = [f2, f2, f4, f4] 
 tags[loc]['Aconv'] = [f1] 
 
 loc = 'EN'
-tags[loc]['Stencil'] = [[1],[-1], [1,-1]] 
+tags[loc]['Stencil'] = [[1,0,0], [0,-1,0], [0,0,1], [0,0,-1]] 
 tags[loc]['Vc'] = f4
-tags[loc]['Acond'] = [[f2], [f2], [f4, f4]] 
+tags[loc]['Acond'] = [f2, f2, f4, f4] 
 tags[loc]['Aconv'] = [f1] 
 
 loc = 'WN'
-tags[loc]['Stencil'] = [[-1],[-1], [1,-1]] 
+tags[loc]['Stencil'] = [[-1,0,0], [0,-1,0], [0,0,1], [0,0,-1]] 
 tags[loc]['Vc'] = f4
-tags[loc]['Acond'] = [[f2], [f2], [f4, f4]] 
+tags[loc]['Acond'] = [f2, f2, f4, f4] 
 tags[loc]['Aconv'] = [f1] 
 
 loc = 'WS'
-tags[loc]['Stencil'] = [[-1],[1], [1,-1]] 
+tags[loc]['Stencil'] = [[-1,0,0], [0,1,0], [0,0,1], [0,0,-1]] 
 tags[loc]['Vc'] = f4
-tags[loc]['Acond'] = [[f2], [f2], [f4, f4]] 
+tags[loc]['Acond'] = [f2, f2, f4, f4] 
 tags[loc]['Aconv'] = [f1] 
 
 # Outside horizontal edges top
 loc = 'EU'
-tags[loc]['Stencil'] = [[1], [1, -1], [-1]] 
+tags[loc]['Stencil'] = [[1,0,0], [0,1,0], [0,-1,0], [0,0,-1]] 
 tags[loc]['Vc'] = f4
-tags[loc]['Acond'] = [[f2], [f4, f4], [f2]] 
+tags[loc]['Acond'] = [f2, f4, f4, f2] 
 tags[loc]['Aconv'] = [f1] 
 
 loc = 'WU'
-tags[loc]['Stencil'] = [[-1], [1, -1], [-1]] 
+tags[loc]['Stencil'] = [[-1,0,0], [0,1,0], [0,-1,0], [0,0,-1]] 
 tags[loc]['Vc'] = f4
-tags[loc]['Acond'] = [[f2], [f4, f4], [f2]] 
+tags[loc]['Acond'] = [f2, f4, f4, f2] 
 tags[loc]['Aconv'] = [f1] 
 
 loc = 'NU'
-tags[loc]['Stencil'] = [[1, -1], [-1], [-1]] 
+tags[loc]['Stencil'] =[[1,0,0], [-1,0,0], [0,-1,0], [0,0,-1]] 
 tags[loc]['Vc'] = f4
-tags[loc]['Acond'] = [[f4, f4], [f2], [f2]] 
+tags[loc]['Acond'] = [f4, f4, f2, f2] 
 tags[loc]['Aconv'] = [f1] 
 
 loc = 'SU'
-tags[loc]['Stencil'] = [[1, -1], [1], [-1]] 
+tags[loc]['Stencil'] = [[1,0,0], [-1,0,0], [0,1,0], [0,0,-1]] 
 tags[loc]['Vc'] = f4
-tags[loc]['Acond'] = [[f4, f4], [f2], [f2]] 
+tags[loc]['Acond'] = [f4, f4, f2, f2] 
 tags[loc]['Aconv'] = [f1] 
 
 # Outside horizontal edges bottom
 loc = 'EB'
-tags[loc]['Stencil'] = [[1], [1, -1], [1]] 
+tags[loc]['Stencil'] = [[1,0,0], [0,1,0], [0,-1,0], [0,0,1]] 
 tags[loc]['Vc'] = f4
-tags[loc]['Acond'] = [[f2], [f4, f4], [f2]] 
+tags[loc]['Acond'] = [f2, f4, f4, f2] 
 tags[loc]['Aconv'] = [f1] 
 
 loc = 'WB'
-tags[loc]['Stencil'] = [[-1], [1, -1], [1]] 
+tags[loc]['Stencil'] = [[-1,0,0], [0,1,0], [0,-1,0], [0,0,1]] 
 tags[loc]['Vc'] = f4
-tags[loc]['Acond'] = [[f2], [f4, f4], [f2]] 
+tags[loc]['Acond'] = [f2, f4, f4, f2] 
 tags[loc]['Aconv'] = [f1] 
 
 loc = 'NB'
-tags[loc]['Stencil'] = [[1, -1], [-1], [1]] 
+tags[loc]['Stencil'] =[[1,0,0], [-1,0,0], [0,-1,0], [0,0,1]] 
 tags[loc]['Vc'] = f4
-tags[loc]['Acond'] = [[f4, f4], [f2], [f2]] 
+tags[loc]['Acond'] = [f4, f4, f2, f2] 
 tags[loc]['Aconv'] = [f1] 
 
 loc = 'SB'
-tags[loc]['Stencil'] = [[1, -1], [1], [1]] 
+tags[loc]['Stencil'] = [[1,0,0], [-1,0,0], [0,1,0], [0,0,1]] 
 tags[loc]['Vc'] = f4
-tags[loc]['Acond'] = [[f4, f4], [f2], [f2]] 
+tags[loc]['Acond'] = [f4, f4, f2, f2] 
 tags[loc]['Aconv'] = [f1] 
 
 #FACES
+#---------------------------------------------
 #Faces cannot be inside or outside
 loc = 'E'
-tags[loc]['Stencil'] = [[1], [1, -1], [1, -1]] 
+tags[loc]['Stencil'] = [[1,0,0], [0,1,0], [0,-1,0], [0,0,1], [0,0,-1]] 
 tags[loc]['Vc'] = f2
-tags[loc]['Acond'] = [[f1], [f2, f2], [f2, f2]] 
+tags[loc]['Acond'] = [f1, f2, f2, f2, f2] 
 tags[loc]['Aconv'] = [f1] 
 
 loc = 'W'
-tags[loc]['Stencil'] = [[-1], [1, -1], [1, -1]] 
+tags[loc]['Stencil'] = [[-1,0,0], [0,1,0], [0,-1,0], [0,0,1], [0,0,-1]] 
 tags[loc]['Vc'] = f2
-tags[loc]['Acond'] = [[f1], [f2, f2], [f2, f2]] 
+tags[loc]['Acond'] = [f1, f2, f2, f2, f2] 
 tags[loc]['Aconv'] = [f1] 
 
 loc = 'N'
-tags[loc]['Stencil'] = [[1, -1], [-1], [1, -1]] 
+tags[loc]['Stencil'] = [[1,0,0], [-1,0,0], [0,-1,0], [0,0,1], [0,0,-1]] 
 tags[loc]['Vc'] = f2
-tags[loc]['Acond'] = [[f2, f2], [f1], [f2, f2]] 
+tags[loc]['Acond'] = [f2, f2, f1, f2, f2] 
 tags[loc]['Aconv'] = [f1] 
 
 loc = 'S'
-tags[loc]['Stencil'] = [[1, -1], [1], [1, -1]] 
+tags[loc]['Stencil'] = [[1,0,0], [-1,0,0], [0,1,0], [0,0,1], [0,0,-1]] 
 tags[loc]['Vc'] = f2
-tags[loc]['Acond'] = [[f2, f2], [f1], [f2, f2]] 
+tags[loc]['Acond'] = [f2, f2, f1, f2, f2] 
 tags[loc]['Aconv'] = [f1] 
 
 loc = 'U'
-tags[loc]['Stencil'] = [[1, -1], [1, -1], [-1]] 
+tags[loc]['Stencil'] = [[1,0,0], [-1,0,0], [0,1,0], [0,-1,0], [0,0,-1]] 
 tags[loc]['Vc'] = f2
-tags[loc]['Acond'] = [[f2, f2], [f2, f2], [f1]] 
+tags[loc]['Acond'] = [f2, f2, f2, f2, f1]  
 tags[loc]['Aconv'] = [f1] 
 
 loc = 'B'
-tags[loc]['Stencil'] = [[1, -1], [1, -1], [1]] 
+tags[loc]['Stencil'] = [[1,0,0], [-1,0,0], [0,1,0], [0,-1,0], [0,0,1]] 
 tags[loc]['Vc'] = f2
-tags[loc]['Acond'] = [[f2, f2], [f2, f2], [f1]] 
+tags[loc]['Acond'] = [f2, f2, f2, f2, f1]  
 tags[loc]['Aconv'] = [f1] 
 
 #The main one:  Center
 loc = ""
-tags[loc]['Stencil'] = [[1, -1], [1, -1], [1, -1]] 
-tags[loc]['Vc'] = f1
-tags[loc]['Acond'] = [[f1, f1], [f1, f1],  [f1, f1]] 
+tags[loc]['Stencil'] = [[1,0,0], [-1,0,0], [0,1,0], [0,-1,0], [0,0,1], [0,0,-1]] 
+tags[loc]['Vc'] = f2
+tags[loc]['Acond'] = [f1]*6  
 tags[loc]['Aconv'] = [0.0] 
