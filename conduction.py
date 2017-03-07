@@ -6,53 +6,105 @@ import numpy as np
 import matplotlib as mpl
 import matplotlib.pyplot as plt
 import CoolProp.CoolProp as cp
-import SolidProp.PropertySI as sp
 import collections
 from deco import concurrent, synchronized
+
+import geometry as geo
+import SolidProp.PropertySI as sp
+import convection as cv
 
 thispath = op.abspath(op.dirname(__file__))
 toK = 273.15
 
-A = [1]
-B = [-1]
-AB = A+B
+tag = geo.tags
 
-typedictionary = collections.defaultdict(dict)
+def plotit(ax, XX, YY, npE, zPlane, dt):
+    npE = np.zeros_like(XX)
+    for key in Tg.keys():
+        x,y,z = key
+        if z != zPlane:
+            continue
 
-#Would be much better to have a function in a dict for each point in SolidProperties.
-#Or at least in a separate funciton.
+        npE[x,y] = Tg[key]
 
-def make_grid(xi, xf, yi, yf, z, Ti, typestring=""):
+    ax.draw(XX,YY, npE)
 
-    gr = []
-    for x in range(xi,xf):
-        gr += [(x, y, z) for y in range(yi,yf)] 
+#Doesn't do the ziggurat!
+def make_grid(xi, xf, yi, yf, z, Ti, zFlag=""):
+
+    xFlag = ["E", "W"]
+    yFlag = ["S", "N"]
+    typr = dict()
+    Tmake = dict()
+
+    #First x row
+    gr = (xi, yi, z)
+    typr[gr]] = xFlag[0]+yFlag[0]+zFlag
+    Tmake[gr] = Ti
+
+    for y in range(yi+1,yf)
+        gr = (xi, y, z)
+        typr[gr] = xFlag[0]+zFlag
+        Tmake[gr] = Ti
+
+    gr = (xi, yf, z)
+    typr[gr] = xFlag[0]+yFlag[1]+zFlag
+    Tmake[gr] = Ti
+
+    # All central x rows
+    for x in range(xi+1,xf):
+        gr = (x, yi, z)
+        typr[gr] = yFlag[0]+zFlag
+        Tmake[gr] = Ti
+
+        for y in range(yi+1,yf)
+            gr = (x, y, z)
+            typr[gr] = zFlag
+            Tmake[gr] = Ti
+
+        gr = [(x,yf,z)]
+        typr[gr] = yFlag[1]+zFlag
+        Tmake[gr] = Ti
+
+    #Last x row
+    gr = (xf, yi, z)
+    typr[gr]] = xFlag[1]+yFlag[0]+zFlag
+    Tmake[gr] = Ti
+
+    for y in range(yi+1,yf)
+        gr = (xf, y, z)
+        typr[gr] = xFlag[1]+zFlag
+        Tmake[gr] = Ti
+
+    gr = (xf,yf,z)
+    typr[gr] = xFlag[1]+yFlag[1]+zFlag
+    Tmake[gr] = Ti
         
-    Tmake.update(dict.fromkeys(gr, Ti))
-    return Tmake, 
+    return Tmake, typr
     
 
 @concurrent
-def step_forward(Tg_in, Tg_out, Pg, qVol, dt_ds, funccGrid):
-    st_make = np.array([[1,0,0], [-1,0,0], [0,1,0], [0,-1,0], [0,0,1], [0,0,-1]])
-    for gridpt in Tg_in.key():
-        Fo = dt_ds*Pg['A']
-        stencil = [tuple(gb) for gb in np.array(gridpt) + st_make]
-        if 0 in gridpt:
-            pass
-            #boundary condition
-        else:
-            Tg_out[gridpt] = Fo * sum([Tg_in[s] for s in stencil]) + (1.0 - Fo*6.0)*Tg_in[gridpt]
+def step_forward((Tg_in, key, Pg, typD, qVol, dt, ds):
+    ty = tag[typD[key]]
+    stH = list(key)
+    #Probably one big list comprehension
+    for i, st in enumerate(ty['Stencil'])
+        for ii, s in enumerate(st):
+            stencil = list(key)
+
         
 @synchronized
-def forward_call(Tg_in, Tg_out, Pg, qVol, dt_ds, funccGrid):
-    pass
+def forward_call(Tg_in, Tg_out, Pg, typD, qVol, dt, ds):
+    
+    for key in Tg_in.keys():
+        Tg_out[key] = step_forward(Tg_in, key, Pg, typD, qVol, dt, ds):
+
+    return Tg_out
 
 #could use scipy interpolate to do a spline.  This is limited to just linear.
 class SolidProperties(object):
     def __init__(self, mat, Tgrid, epsil):
         self.props = sp.get_props(mat)
-        self.epsilon = epsil
         self.pGrid = collections.defaultdict(dict)
         self.update_props(Tgrid)
         
@@ -79,10 +131,11 @@ if __name__ == "__main__":
     xf, yf = Lx, Ly
     xi, yi = 0, 0
     
-    Tuno, fGrid = make_grid(xi, xf, yi, yf, 0, param.T_init, zFlag=1)
+    Tuno, fGrid = make_grid(xi, xf, yi, yf, 0, param.T_init, zFlag="B")
     htSide = param.stepht * ds
     Aside = lambda xd, yd: 2.0*htside(xd*ds + yd*ds)
     surfaceArea = 0.0
+    dt = param.dt
 
     for z in range(1,Lz):
         if not param.thinning(z):
@@ -92,12 +145,29 @@ if __name__ == "__main__":
             yi += 5 
             yf -= 5
             
-        Tuno, fGrid = make_grid(xi, xf, yi, yf, z, param.T_init)
+        Tt, ft = make_grid(xi, xf, yi, yf, z, param.T_init)
+        Tuno.update(Tt)
+        fGrid.update(ft)
     
-    Tuno, fGrid = make_grid(xi, xf, yi, yf, Lz, param.T_init, zflag=2)
+    Tt, ft = make_grid(xi, xf, yi, yf, Lz, param.T_init, zFlag="U")
+    Tuno.update(Tt)
+    fGrid.update(ft)
+
     surfaceArea += Aside(float(xf-xi), float(yf-yi))
 
     Tdos = copy.deepcopy(Tuno)
+
+    matProps = SolidProperties(mat, Tuno)
+    tnow = 0.0
+
+    while tnow < tfinal:
+        Tdos = forward_call(Tuno, Tdos, Pg, fGrid, param.qVol, param.dt, param.ds)
+        matprops.update_props(Tdos)
+        Tuno = forward_call(Tdos, Tuno, Pg, fGrid, param.qVol, param.dt, param.ds)
+        matprops.update_props(Tuno)
+        tnow += dt
+
+        #Do plotting
 
 
 

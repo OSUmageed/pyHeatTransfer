@@ -1,4 +1,5 @@
 #:kivy 1.9.1
+#:import MeshLinePlot kivy.garden.graph.MeshLinePlot
 
 <MyButton@Button>:
     text_size: self.size
@@ -6,6 +7,7 @@
     markup: True
     halign: 'center'
     valign: 'middle'
+    bold: True
 
 <MyText@TextInput>:
     text_size: self.size
@@ -17,10 +19,11 @@
 
 <MyLabel@Label>:
     text_size: self.size
-    font_size: '15sp'
+    font_size: '25sp'
     markup: True
     halign: 'right'
     valign: 'middle'
+    
 
 <ScatterTextWidget>:
     orientation: 'vertical'
@@ -37,6 +40,7 @@
             rows: 1
             cols: 2
             padding: 5
+    ## Ti, Ta, dt, ds, q''', h, Material, Shape??, epsilon, Tsurr
 
             GridLayout:
                 cols: 6
@@ -48,14 +52,14 @@
                 size_hint_x: 0.9
 
                 MyLabel:
-                    text: 'Ti'
+                    text: 'T[sub]iniital[/sub] (C)'
                 MyText:
                     id: sz
                     text: '5'
                     on_focus: sz2.text = str(float(sz.text)*float(sz2.text))
 
                 MyLabel:
-                    text: 'To'
+                    text: 'T[sub]ambient[/sub] (C)'
                 MyText:
                     id: sz2
                     text: '50'
@@ -69,16 +73,29 @@
                     on_focus: sz2.text = str(float(sz.text)*float(sz2.text))
 
                 MyLabel:
-                    text: 'Ton'
+                    text: 't[sub]final[/sub] (s)'
                 MyText:
                     id: sz3
                     text: '50'
                     on_focus: sz.text = str(float(sz.text)*float(sz2.text))
 
                 MyLabel:
-                    text: 'Ignore radiation?'
+                    text: 'constant (W/m[sup]2[\sup]K) ?'
                 CheckBox:
+                    id: 'hCheck'
                     state: 'down'
+
+                DropDown:
+                    on_select: lambda instance, x: setattr(mainbutton, 'text', x)
+                    Button:
+                        text: 'My first Item'
+                        size_hint_y: None
+                        height: 44
+                    Button:
+                        text: 'My second Item'
+                        size_hint_y: None
+                        height: 44
+
 
             GridLayout:
                 cols: 1
@@ -86,28 +103,31 @@
                 row_default_height: 40
                 row_force_default: True
                 size_hint_x: .15
+
                 MyButton:
                     text: "Start"
                 MyButton:
-                    text: "Stop"
-                MyButton:
                     text: "Pause"
-                    on_press: root.printChildren()        
+                    ## on_press: root.printChildren()       
+                MyButton:
+                    text: "Stop"
+                    on_press: root.shutoff()  
+ 
 
         GridLayout:
             cols: 2
             rows: 1
-            Label:
-                id: shown
-                text: 'Called it'
-                font_size: 50
-                color: [1,0,0]
+            Graph:
+                id: graphTotal
+                xlabel: "x"
+                ylabel: "y"
+                title: "Shape of item"
 
-            Label:
-                id: shown
-                text: 'Called it'
-                font_size: 50
-                color: [1,0,0]
+            Graph:
+                id: graphcontour
+                xlabel: "x"
+                ylabel: "y"
+                title: "Temperature (C)"
 
 
                 

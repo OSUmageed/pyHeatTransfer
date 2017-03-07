@@ -16,6 +16,7 @@ class Ziggurat(object):
         self.Ta = Ta + toK
         self.h = 10.0
         self.ep = ep
+        self.qVol = 0.0
         self.thinning = lambda z: (z%self.stepht) 
 
 class Brick(object):
@@ -33,4 +34,5 @@ class Brick(object):
         self.Ta = Ta + toK
         self.h = 10.0
         self.ep = ep
+        self.qVol = 0.0
         self.thinning = lambda z: True

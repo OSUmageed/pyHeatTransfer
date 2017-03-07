@@ -11,9 +11,10 @@ from kivy.uix.boxlayout import BoxLayout
 from kivy.uix.gridlayout import GridLayout
 from kivy.graphics.vertex_instructions import Rectangle, Ellipse, Line
 from kivy.graphics.context_instructions import Color
-from kivy.lang import Builder
-from kivy.properties import ListProperty
-
+from kivy.uix.dropdown import DropDown
+# from kivy.lang import Builder
+# from kivy.properties import ListProperty
+from kivy.garden.graph import MeshLinePlot
 import numpy as np
 import SolidProp.PropertySI as sp
 
@@ -38,18 +39,11 @@ class ScatterTextWidget(BoxLayout):
     #     self.i +=1
         
     def shutoff(self, *args):
-        sys.exit()
+        raise SystemExit
 
 class HeatApp(App):
     def build(self):
         return ScatterTextWidget()
-        # fL = kF.FloatLayout()
-        # sC = kS.Scatter()
-        # lbl = kL.Label(text=MATERIALS[0], font_size=150)
-
-        # fL.add_widget(sC)
-        # sC.add_widget(lbl)
-        # return fL
 
 if __name__ == "__main__":
     HeatApp().run()
