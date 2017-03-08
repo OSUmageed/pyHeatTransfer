@@ -12,9 +12,12 @@ from kivy.uix.gridlayout import GridLayout
 from kivy.graphics.vertex_instructions import Rectangle, Ellipse, Line
 from kivy.graphics.context_instructions import Color
 from kivy.uix.dropdown import DropDown
-# from kivy.lang import Builder
-# from kivy.properties import ListProperty
-from kivy.garden.graph import MeshLinePlot
+from kivy.clock import Clock
+from kivy.properties import ListProperty
+from kivy.garden.graph import ContourPlot
+
+from kivy.uix.spinner import Spinner
+
 import numpy as np
 import SolidProp.PropertySI as sp
 
@@ -24,19 +27,28 @@ datapath = op.join(solidpath, 'PropData')
 
 MATERIALS = sp.prop_names()
 
+
 class ScatterTextWidget(BoxLayout):
-    i=0
+
+    #mats = ListProperty(MATERIALS)
+    mats = MATERIALS
+
+    def __init__(self,):
+        super(ScatterTextWidget, self).__init__()
+        #self.spinner = spinner
+        #self.mats = MATERIALS
+        self.plot = ContourPlot(color=[1, 0, 0, 1])
+
     def changeColor(self, *args):
         color = [random.random() for _ in range(3)] + [1]
         label = self.ids['shown']
         label.color = color
 
-    # def printChildren(self, *args):
-    #     label = self.ids['shown']
-    #     ky = list(self.ids.keys())
-    #     v = self.ids[ky[self.i]]
-    #     label.text = "key={}, val={}".format(ky[self.i],v)
-    #     self.i +=1
+    def start(self):
+        self.ids.graphcontour.add_plot(self.plot)
+
+    def pause(self):
+        pass
         
     def shutoff(self, *args):
         raise SystemExit

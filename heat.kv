@@ -1,5 +1,5 @@
 #:kivy 1.9.1
-#:import MeshLinePlot kivy.garden.graph.MeshLinePlot
+#:import ContourPlot kivy.garden.graph.ContourPlot
 
 <MyButton@Button>:
     text_size: self.size
@@ -11,7 +11,7 @@
 
 <MyText@TextInput>:
     text_size: self.size
-    font_size: '25sp'
+    font_size: '15sp'
     markup: True
     cursor_blink: True
     write_tab: False
@@ -19,17 +19,16 @@
 
 <MyLabel@Label>:
     text_size: self.size
-    font_size: '25sp'
+    font_size: '20sp'
     markup: True
     halign: 'right'
     valign: 'middle'
     
-
 <ScatterTextWidget>:
     orientation: 'vertical'
     canvas:
         Color: 
-            rgba: 0.05,0.7,0.24,0.9
+            rgba: 0.05,0.05,0.24,0.7
         Rectangle:
             pos: self.pos
             size: self.size
@@ -43,59 +42,201 @@
     ## Ti, Ta, dt, ds, q''', h, Material, Shape??, epsilon, Tsurr
 
             GridLayout:
-                cols: 6
-                rows: 3
+                cols: 3
+                rows: 5
                 padding: 5
                 spacing: 10
-                row_default_height: 40
+                row_default_height: 30
                 row_force_default: True
-                size_hint_x: 0.9
+
+## Labels for header row
+                Label:
+                    bold: True
+                    text_size: self.size
+                    font_size: '30sp'
+                    text: "Material"
+                    halign: 'center'
+                Label:  
+                    bold: True
+                    text_size: self.size
+                    font_size: '30sp'
+                    text: "Ambient"
+                    halign: 'center'
+                Label:
+                    bold: True
+                    text_size: self.size
+                    font_size: '30sp'    
+                    text: "Shape"
+                    halign: 'center'
+
+## Start of input range
+
+## Ti
+                GridLayout:
+                    cols: 2
+                    rows: 1
+                    padding: 5
+                    spacing: 10
+                    row_default_height: 30
+                    row_force_default: True
+
+                    MyLabel:
+                        text: 'T[sub]iniital[/sub] (C)'
+                    MyText:
+                        id: Ti
+                        text: '25'
+                        on_focus: None
+
+## Tambient
+                GridLayout:
+                    cols: 2
+                    rows: 1
+                    padding: 5
+                    spacing: 10
+                    row_default_height: 30
+                    row_force_default: True
+
+                    MyLabel:
+                        text: 'T[sub]ambient[/sub] (C)'
+                    MyText:
+                        id: Ta
+                        text: '200'
+                        on_focus: None
+                        ## sz.text = str(float(sz.text)*float(sz2.text))
+## dt
+                GridLayout:
+                    cols: 2
+                    rows: 1
+                    padding: 5
+                    spacing: 10
+                    row_default_height: 30
+                    row_force_default: True
+
+                    MyLabel:
+                        text: 'timestep (s)'
+                    MyText:
+                        id: dt
+                        text: '0.001'
+                        on_focus: None
+## Epsilon
+                GridLayout:
+                    cols: 2
+                    rows: 1
+                    padding: 5
+                    spacing: 10
+                    row_default_height: 30
+                    row_force_default: True
+
+                    MyLabel:
+                        text: 'Emissivity'
+                    MyText:
+                        id: ep
+                        text: '0.05'
+                        on_focus: None
+
+## h
+                GridLayout:
+                    cols: 2
+                    rows: 1
+                    padding: 5
+                    spacing: 10
+                    row_default_height: 30
+                    row_force_default: True
+
+                    MyLabel:
+                        text: 'h (W/m[sup]2[/sup]K)'
+                    MyText:
+                        id: h
+                        text: '10'
+                        on_focus: None
+
+## ds
+                GridLayout:
+                    cols: 2
+                    rows: 1
+                    padding: 5
+                    spacing: 10
+                    row_default_height: 30
+                    row_force_default: True
+
+                    MyLabel:
+                        text: 'gridstep (m)'
+                    MyText:
+                        id: ds
+                        text: '0.005'
+                        on_focus: None
+
+## q'''
+                GridLayout:
+                    cols: 2
+                    rows: 1
+                    padding: 5
+                    spacing: 10
+                    row_default_height: 30
+                    row_force_default: True
+
+                    MyLabel:
+                        text: 'heat gen (W/m[sup]3[/sup])'
+                    MyText:
+                        id: qprime
+                        text: '0.0'
+                        on_focus: None
+
+## tfinal
+                GridLayout:
+                    cols: 2
+                    rows: 1
+                    padding: 5
+                    spacing: 10
+                    row_default_height: 30
+                    row_force_default: True
+                    MyLabel:
+                        text: 't[sub]final[/sub] (s)'
+                    MyText:
+                        id: tf
+                        text: '50'
+                        on_focus: None
+                    
+## LWH
+                GridLayout:
+                    cols: 6
+                    rows: 1
+                    padding: 5
+                    spacing: 10
+                    row_default_height: 30
+                    row_force_default: True
+                    MyLabel:
+                        text: 'L'
+                    MyText:
+                        id: L
+                        text: '0.2'
+                        on_focus: None
+                    MyLabel:
+                        text: 'W'
+                    MyText:
+                        id: W
+                        text: '0.2'
+                        on_focus: None
+                    MyLabel:
+                        text: 'H'
+                    MyText:
+                        id: H
+                        text: '0.5'
+                        on_focus: None
+                
+                Spinner:
+                    id: dropmat
+                    text: root.mats[0]
+                    values: root.mats
 
                 MyLabel:
-                    text: 'T[sub]iniital[/sub] (C)'
-                MyText:
-                    id: sz
-                    text: '5'
-                    on_focus: sz2.text = str(float(sz.text)*float(sz2.text))
+                    text: "-------------------"
+                    halign: "center"
 
-                MyLabel:
-                    text: 'T[sub]ambient[/sub] (C)'
-                MyText:
-                    id: sz2
-                    text: '50'
-                    on_focus: sz.text = str(float(sz.text)*float(sz2.text))
-
-                MyLabel:
-                    text: 'Epsilon'
-                MyText:
-                    id: sz3
-                    text: '5'
-                    on_focus: sz2.text = str(float(sz.text)*float(sz2.text))
-
-                MyLabel:
-                    text: 't[sub]final[/sub] (s)'
-                MyText:
-                    id: sz3
-                    text: '50'
-                    on_focus: sz.text = str(float(sz.text)*float(sz2.text))
-
-                MyLabel:
-                    text: 'constant (W/m[sup]2[\sup]K) ?'
-                CheckBox:
-                    id: 'hCheck'
-                    state: 'down'
-
-                DropDown:
-                    on_select: lambda instance, x: setattr(mainbutton, 'text', x)
-                    Button:
-                        text: 'My first Item'
-                        size_hint_y: None
-                        height: 44
-                    Button:
-                        text: 'My second Item'
-                        size_hint_y: None
-                        height: 44
-
+                Spinner:
+                    id: drop
+                    text: 'Brick'
+                    values: ['Brick', 'Ziggurat']
 
             GridLayout:
                 cols: 1
@@ -106,13 +247,13 @@
 
                 MyButton:
                     text: "Start"
+                    on_press: root.start()
                 MyButton:
                     text: "Pause"
-                    ## on_press: root.printChildren()       
+                    on_press: root.pause()       
                 MyButton:
                     text: "Stop"
                     on_press: root.shutoff()  
- 
 
         GridLayout:
             cols: 2

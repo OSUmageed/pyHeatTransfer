@@ -36,9 +36,7 @@ class Fluid(object):
 
 
 class Forced(Fluid):
-    
     pass
 
-class Free(Fluid):
-    
+class Free(Fluid): 
     pass

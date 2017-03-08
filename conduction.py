@@ -7,7 +7,8 @@ import matplotlib.pyplot as plt
 import CoolProp.CoolProp as cp
 import collections
 import time
-from mpl_toolkits.mplot3d import Axes3D
+import random
+# from mpl_toolkits.mplot3d import Axes3D
 from deco import concurrent, synchronized
 
 import geometry as geo
@@ -25,18 +26,13 @@ def contourmaker(Tg, XX, yspot):
         x,y,z = key
         if y != yspot:
             continue
-    
-        npE[x,z] = Tg[key]
+                
+        npE[z,x] = Tg[key]
 
     return npE
 
-
-def plotit(fg, ln, Tg, XX, ZZ, yspot, tn):
-
-    TY = contourmaker(Tg, XX, yspot)
-    fg.title("t = {:f.3} s".format(tn))
-    ln.set_zdata(TY-toK)
-    fg.canvas.draw()
+def randT(T):
+    return 0.1*random.random() + T
 
 #Doesn't do the ziggurat!
 def make_grid(xi, xf, yi, yf, z, Ti, zFlag=""):
@@ -49,48 +45,47 @@ def make_grid(xi, xf, yi, yf, z, Ti, zFlag=""):
     #First x row
     gr = (xi, yi, z)
     typr[gr] = xFlag[0]+yFlag[0]+zFlag
-    Tmake[gr] = Ti
+    Tmake[gr] = randT(Ti)
 
     for y in range(yi+1,yf):
         gr = (xi, y, z)
         typr[gr] = xFlag[0]+zFlag
-        Tmake[gr] = Ti
+        Tmake[gr] = randT(Ti)
 
     gr = (xi, yf, z)
     typr[gr] = xFlag[0]+yFlag[1]+zFlag
-    Tmake[gr] = Ti
+    Tmake[gr] = randT(Ti)
 
     # All central x rows
     for x in range(xi+1,xf):
         gr = (x, yi, z)
         typr[gr] = yFlag[0]+zFlag
-        Tmake[gr] = Ti
+        Tmake[gr] = randT(Ti)
 
         for y in range(yi+1,yf):
             gr = (x, y, z)
             typr[gr] = zFlag
-            Tmake[gr] = Ti
+            Tmake[gr] = randT(Ti)
 
         gr = (x,yf,z)
         typr[gr] = yFlag[1]+zFlag
-        Tmake[gr] = Ti
+        Tmake[gr] = randT(Ti)
 
     #Last x row
     gr = (xf, yi, z)
     typr[gr] = xFlag[1]+yFlag[0]+zFlag
-    Tmake[gr] = Ti
+    Tmake[gr] = randT(Ti)
 
     for y in range(yi+1,yf):
         gr = (xf, y, z)
         typr[gr] = xFlag[1]+zFlag
-        Tmake[gr] = Ti
+        Tmake[gr] = randT(Ti)
 
     gr = (xf,yf,z)
     typr[gr] = xFlag[1]+yFlag[1]+zFlag
-    Tmake[gr] = Ti
+    Tmake[gr] = randT(Ti)
         
     return Tmake, typr
-    
 
 def step_forward(Tg_in, ky, Pg, typD, V, A, dt, ds, Ta, h, ep, qVol):
     ty = tag[typD]
@@ -101,14 +96,14 @@ def step_forward(Tg_in, ky, Pg, typD, V, A, dt, ds, Ta, h, ep, qVol):
     for c in cs:
         ck.append(Tg_in[tuple(c)])
 
-    conduction = cond_coefficient * (sum([ci*Ai*A for ci, Ai in list(zip(ty['Acond'],cs))]) - 
-                Tg_in[ky]*sum(ty['Acond'])*A)
+    conduction = cond_coefficient * (sum([ci*Ai*A for ci, Ai in list(zip(ty['Acond'],ck))]) - 
+                Tg_in[ky]*A*sum(ty['Acond']))
 
-    cv_radiant = cv.ambientQ(Tg_in[ky], Ta, ty['Aconv'][0], h, ep)/(V*ty['Vc']*Pg['D']*Pg['CP'])
+    cv_radiant = cv.ambientQ(Tg_in[ky], Ta, ty['Aconv'][0]*A, h, ep)/(V*ty['Vc']*Pg['D']*Pg['CP'])
     
     return Tg_in[ky] + dt*(conduction + cv_radiant + qVol/Pg['D']*Pg['CP'])
 
-        
+
 def forward_call(Tg_in, Pg, typD, dt, ds, Ta, h, ep, qVol=0.0):
     A = ds**2
     V = A*ds 
@@ -141,11 +136,9 @@ if __name__ == "__main__":
     Nx, Ny, Nz = param.gridDim   #Number of grid points in each direction.
     Lx, Ly, Lz = param.dims       #Full length of domain in each direction.
     #Grid points for plot.   
-    Gx, Gy, Gz = np.meshgrid(np.arange(0,Lx+2.0*ds,ds), 
-                                np.arange(0,Ly+2.0*ds,ds),
+    Gx, Gz = np.meshgrid(np.arange(0,Lx+2.0*ds,ds), 
                                     np.arange(0,Lz+2.0*ds,ds))
 
-    print(Gx.shape)
 
     Tuno, fGrid = dict(), dict()
     xf, yf = Nx, Ny
@@ -155,14 +148,10 @@ if __name__ == "__main__":
     Tuno, fGrid = make_grid(xi, xf, yi, yf, 0, param.T_init, zFlag="B")
     t2 = time.time()
     print("First instantiation: {:.6f}s".format(t2-t))
-    htSide = param.stepht * ds
-    Aside = lambda xd, yd: 2.0*htSide*(xd*ds + yd*ds)
-    surfaceArea = 0.0
     dt = param.dt
 
     for z in range(1,Nz):
         if not param.thinning(z):
-            surfaceArea += Aside(float(xf-xi), float(yf-yi))
             xi += 5 
             xf -= 5 
             yi += 5 
@@ -176,25 +165,23 @@ if __name__ == "__main__":
     Tuno.update(Tt)
     fGrid.update(ft)
     
-    surfaceArea += Aside(float(xf-xi), float(yf-yi))
     t3 = time.time()
     print("All instantiation: {:.6f}s".format(t3-t2))
 
-    matProps = SolidProperties(param.mat, Tuno)
     tnow = 0.0
+    plt.figure(figsize=(8,8))
     plt.ion()
-    fig = plt.figure()
-    ax = fig.add_subplot(111, projection='3d')
-    yval = 0.05
-    Gsize = Gy.shape
-    yplace = Gsize[1]//2
-    Gxx = Gx[:, yplace, :]
-    Gzz = Gz[:, yplace, :]
-    Zv = contourmaker(Tuno, Gxx, yplace)
-    
-    lines = ax.plot_surface(Gxx, Gzz, Zv-toK)
     plt.show()
-    print("here")
+#    fig = plt.figure()
+#    ax = fig.add_subplot(111)
+    yval = 0.05
+    Gsize = Gx.shape
+    yplace = Gsize[1]//2
+    Zv = contourmaker(Tuno, Gx, yplace)
+        
+    matProps = SolidProperties(param.mat, Tuno)
+    
+    print("Here")
     t = [time.time()]
     while tnow < param.tfinal:
         Tdos = forward_call(Tuno, matProps.pGrid, fGrid, dt, ds, param.Ta, param.h, param.ep)
@@ -203,8 +190,13 @@ if __name__ == "__main__":
         matProps.update_props(Tuno)
         tnow += dt*2.0
         t.append(time.time())
-        print(t[-1]-t[-2])
+        print(tnow, t[-1]-t[-2])
 
-        plotit(fig, lines, Tuno, Gxx, Gzz, yplace, tnow)
+        plt.clf()
+        Zv = contourmaker(Tuno, Gx, yplace)
+        CS = plt.contour(Gx, Gz, Zv-toK, 10)
+        plt.title("t = {:.3f} s".format(tnow))
+        plt.clabel(CS, inline=1, fontsize=10)
+        plt.draw()
 
 

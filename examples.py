@@ -1,40 +1,29 @@
 
+
 toK = 273.15
 
-class Ziggurat(object):
-    def __init__(self, mat='Aluminum', T_init=25.0, 
-                Ta=500.0, ep=0.077,
-                LWH=(0.1,0.1,1.0)):
+shape_dict= { 
+        'Brick': lambda z, ht: True
+        'Ziggurat' : lambda z,ht: (z%ht)
+}
 
+class Thing(object):
+        
+    def __init__(self, mat, T_init, Ta, ep, dt, ds, h, qVol, tfinal, LWH, shape):
         self.mat = mat
-        self.ds = 0.001
+        self.ds = ds
         self.dims = LWH
         self.gridDim = (int(d/self.ds)+1 for d in LWH) 
-        self.dt = 0.001
-        self.stepht = 20
+        self.dt = dt
+        self.stepht = 
         self.T_init = T_init + toK
         self.Ta = Ta + toK
-        self.h = 10.0
+        self.h = h
         self.ep = ep
-        self.qVol = 0.0
-        self.tfinal = 5.0
-        self.thinning = lambda z: (z%self.stepht) 
+        self.qVol = qVol
+        self.tfinal = tfinal
+        self.thinning = shape_dict[shape]
 
-class Brick(object):
-    def __init__(self, mat='Aluminum', T_init=25.0, 
-                Ta=500.0, ep=0.077,
-                LWH=(0.1,0.1,0.2)):
+zigg = Thing()
+brick = Thing()
 
-        self.mat = mat
-        self.ds = 0.005
-        self.dims = LWH
-        self.gridDim = (int(d/self.ds)+1 for d in LWH) 
-        self.dt = 0.001
-        self.stepht = LWH[-1]
-        self.T_init = T_init + toK
-        self.Ta = Ta + toK
-        self.h = 10.0
-        self.ep = ep
-        self.qVol = 0.0
-        self.tfinal = 5.0
-        self.thinning = lambda z: True

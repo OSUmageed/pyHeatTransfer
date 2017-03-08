@@ -191,6 +191,6 @@ tags[loc]['Aconv'] = [f1]
 #The main one:  Center
 loc = ""
 tags[loc]['Stencil'] = [[1,0,0], [-1,0,0], [0,1,0], [0,-1,0], [0,0,1], [0,0,-1]] 
-tags[loc]['Vc'] = f2
+tags[loc]['Vc'] = f1
 tags[loc]['Acond'] = [f1]*6  
 tags[loc]['Aconv'] = [0.0] 
