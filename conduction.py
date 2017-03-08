@@ -1,3 +1,6 @@
+#I suppose the idea is that it gets these values from somewhere and takes off.
+#Regardless of where those values come from.
+
 import os
 import os.path as op
 import sys
@@ -8,12 +11,16 @@ import CoolProp.CoolProp as cp
 import collections
 import time
 import random
-# from mpl_toolkits.mplot3d import Axes3D
 from deco import concurrent, synchronized
 
 import geometry as geo
 import SolidProp.PropertySI as sp
 import convection as cv
+
+shape_func = { 
+        'Brick': lambda z, ht: True,
+        'Ziggurat' : lambda z, ht: (z%ht)
+}
 
 thispath = op.abspath(op.dirname(__file__))
 toK = 273.15
@@ -126,77 +133,72 @@ class SolidProperties(object):
             for prop in self.props.keys():
                 self.pGrid[pt][prop] = np.interp(Tgrid[pt], self.props[prop][0, :], self.props[prop][1, :])
             
-if __name__ == "__main__":
-    import examples as ex
-    print("You have chosen to run a predefined example: ")
-    choice = bool(int(input("Enter 1 for ziggurat, 0 for brick:  ")))
-    param = ex.Ziggurat() if choice else ex.Brick()
-
-    ds = param.ds
-    Nx, Ny, Nz = param.gridDim   #Number of grid points in each direction.
-    Lx, Ly, Lz = param.dims       #Full length of domain in each direction.
-    #Grid points for plot.   
+#Check to see if it works before refactor.
+def initialize(specificDict):
+    ds = specificDict['ds']
+    Lx, Ly, Lz = specificDict['Lx'], specificDict['Ly'], specificDict['Lz'] 
+    Nx, Ny, Nz = int(Lx/ds)+1, int(Ly/ds)+1, int(Lz/ds)+1
     Gx, Gz = np.meshgrid(np.arange(0,Lx+2.0*ds,ds), 
                                     np.arange(0,Lz+2.0*ds,ds))
 
-
-    Tuno, fGrid = dict(), dict()
+    dt = specificDict['dt']
+    Ti = specificDict['Ti']
+    Ta, h, ep = specificDict['Ta'], specificDict['h'], specificDict['ep']
     xf, yf = Nx, Ny
     xi, yi = 0, 0
-    t = time.time()
-    
-    Tuno, fGrid = make_grid(xi, xf, yi, yf, 0, param.T_init, zFlag="B")
-    t2 = time.time()
-    print("First instantiation: {:.6f}s".format(t2-t))
-    dt = param.dt
+    Tuno, fGrid = make_grid(xi, xf, yi, yf, 0, Ti, zFlag="B")
+
+    cD = specificDict['stepD']
+    stepFunction = shape_func[specificDict['shape']]
 
     for z in range(1,Nz):
-        if not param.thinning(z):
-            xi += 5 
-            xf -= 5 
-            yi += 5 
-            yf -= 5
-         
-        Tt, ft = make_grid(xi, xf, yi, yf, z, param.T_init)
+        if not stepFunction(z, specificDict['stepH']):
+            xi += cD
+            xf -= cD
+            yi += cD
+            yf -= cD
+            
+        Tt, ft = make_grid(xi, xf, yi, yf, z, Ti)
         Tuno.update(Tt)
         fGrid.update(ft)
     
-    Tt, ft = make_grid(xi, xf, yi, yf, Nz, param.T_init, zFlag="U")
+    Tt, ft = make_grid(xi, xf, yi, yf, Nz, Ti, zFlag="U")
     Tuno.update(Tt)
     fGrid.update(ft)
-    
-    t3 = time.time()
-    print("All instantiation: {:.6f}s".format(t3-t2))
 
     tnow = 0.0
-    plt.figure(figsize=(8,8))
-    plt.ion()
-    plt.show()
-#    fig = plt.figure()
-#    ax = fig.add_subplot(111)
     yval = 0.05
     Gsize = Gx.shape
     yplace = Gsize[1]//2
-    Zv = contourmaker(Tuno, Gx, yplace)
         
-    matProps = SolidProperties(param.mat, Tuno)
-    
-    print("Here")
+    matProps = SolidProperties(specificDict['mat'], Tuno)
     t = [time.time()]
-    while tnow < param.tfinal:
-        Tdos = forward_call(Tuno, matProps.pGrid, fGrid, dt, ds, param.Ta, param.h, param.ep)
+
+    while tnow < specificDict['tFinal']:
+        Tdos = forward_call(Tuno, matProps.pGrid, fGrid, dt, ds, Ta, h, ep)
         matProps.update_props(Tdos)
-        Tuno = forward_call(Tdos, matProps.pGrid, fGrid, dt, ds, param.Ta, param.h, param.ep)
+        Tuno = forward_call(Tdos, matProps.pGrid, fGrid, dt, ds, Ta, h, ep)
+
         matProps.update_props(Tuno)
         tnow += dt*2.0
         t.append(time.time())
         print(tnow, t[-1]-t[-2])
 
-        plt.clf()
-        Zv = contourmaker(Tuno, Gx, yplace)
-        CS = plt.contour(Gx, Gz, Zv-toK, 10)
-        plt.title("t = {:.3f} s".format(tnow))
-        plt.clabel(CS, inline=1, fontsize=10)
-        plt.draw()
 
+    Zv = contourmaker(Tuno, Gx, yplace)
+    CS = plt.contour(Gx, Gz, Zv-toK, 10)
+    plt.title("t = {:.3f} s".format(tnow))
+    plt.clabel(CS, inline=1, fontsize=10)
+    plt.grid(True)
+    plt.show()
+    
+    return 'Yay'
 
+if __name__ == "__main__":
+
+    import examples as ex
+    print("You have chosen to run a predefined example: ")
+    choice = bool(int(input("Enter 1 for ziggurat, 0 for brick:  ")))
+
+    param = ex.zigg if choice else ex.bricky
+    initialize(param)

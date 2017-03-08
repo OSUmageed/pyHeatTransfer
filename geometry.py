@@ -18,6 +18,7 @@ f8 = 1.0/8.0
 f4 = 1.0/4.0
 f2 = 1.0/2.0
 f1 = f2+f2
+full = [[1,0,0], [-1,0,0], [0,1,0], [0,-1,0], [0,0,1], [0,0,-1]] 
 
 tags = defaultdict(dict)
 
@@ -190,7 +191,24 @@ tags[loc]['Aconv'] = [f1]
 
 #The main one:  Center
 loc = ""
-tags[loc]['Stencil'] = [[1,0,0], [-1,0,0], [0,1,0], [0,-1,0], [0,0,1], [0,0,-1]] 
+tags[loc]['Stencil'] = full
 tags[loc]['Vc'] = f1
 tags[loc]['Acond'] = [f1]*6  
 tags[loc]['Aconv'] = [0.0] 
+
+#We alias full because the inside corners are also full stencils.  The main problem is recognizing those corners and edges.
+
+#INSIDE (4 top and bottom corners, 4 top and bottom edges, ignore vertical inside corners)
+
+#INSIDE CORNERS 
+loc = "ESUI"
+tags[loc]['Stencil'] = full #All inside items
+tags[loc]['Vc'] = f2 + f8 #All inside corners 5 of 8 cubes in cube
+tags[loc]['Acond'] = [f2+f4, f2, f2+f4, f2, f1, f4]
+tags[loc]['Aconv'] = [f1+f4] 
+
+loc = "ESBI"
+tags[loc]['Stencil'] = full 
+tags[loc]['Vc'] = f2 + f8 
+tags[loc]['Acond'] = [f2+f4, f2, f2+f4, f2, f4, f1]
+tags[loc]['Aconv'] = [f1+f4] 

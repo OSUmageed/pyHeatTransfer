@@ -20,6 +20,8 @@ from kivy.uix.spinner import Spinner
 
 import numpy as np
 import SolidProp.PropertySI as sp
+import conduction as cd
+import examples as ex
 
 thispath = op.abspath(op.dirname(__file__))
 solidpath = op.join(thispath, 'SolidProp')
@@ -27,25 +29,28 @@ datapath = op.join(solidpath, 'PropData')
 
 MATERIALS = sp.prop_names()
 
+class TransientHeat(BoxLayout):
 
-class ScatterTextWidget(BoxLayout):
-
-    #mats = ListProperty(MATERIALS)
     mats = MATERIALS
 
     def __init__(self,):
-        super(ScatterTextWidget, self).__init__()
-        #self.spinner = spinner
-        #self.mats = MATERIALS
+        super(TransientHeat, self).__init__()
         self.plot = ContourPlot(color=[1, 0, 0, 1])
-
-    def changeColor(self, *args):
-        color = [random.random() for _ in range(3)] + [1]
-        label = self.ids['shown']
-        label.color = color
+        self.parameter_dict = ex.zigg
 
     def start(self):
+        #Plot should be somewhere else
         self.ids.graphcontour.add_plot(self.plot)
+        for i in self.ids.keys():
+            if 'graph' not in i:
+                try:
+                    self.parameter_dict[i] = float(self.ids[i].text)
+                except:
+                    self.parameter_dict[i] = self.ids[i].text
+
+        print(cd.initialize(self.parameter_dict))
+        raise SystemExit
+
 
     def pause(self):
         pass
@@ -55,7 +60,7 @@ class ScatterTextWidget(BoxLayout):
 
 class HeatApp(App):
     def build(self):
-        return ScatterTextWidget()
+        return TransientHeat()
 
 if __name__ == "__main__":
     HeatApp().run()
