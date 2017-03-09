@@ -9,13 +9,9 @@ from kivy.uix.floatlayout import FloatLayout
 from kivy.uix.textinput import TextInput
 from kivy.uix.boxlayout import BoxLayout
 from kivy.uix.gridlayout import GridLayout
-from kivy.graphics.vertex_instructions import Rectangle, Ellipse, Line
-from kivy.graphics.context_instructions import Color
-from kivy.uix.dropdown import DropDown
 from kivy.clock import Clock
 from kivy.properties import ListProperty
 from kivy.garden.graph import ContourPlot
-
 from kivy.uix.spinner import Spinner
 
 import numpy as np
@@ -35,7 +31,7 @@ class TransientHeat(BoxLayout):
 
     def __init__(self,):
         super(TransientHeat, self).__init__()
-        self.plot = ContourPlot(color=[1, 0, 0, 1])
+        self.plot = ContourPlot()
         self.parameter_dict = ex.zigg
 
     def start(self):

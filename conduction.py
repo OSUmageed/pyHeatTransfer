@@ -128,22 +128,48 @@ class SolidProperties(object):
         self.pGrid = collections.defaultdict(dict)
         self.update_props(Tgrid)
         
+    #Should accommodate lists in order to 
     def update_props(self, Tgrid):
         for pt in Tgrid.keys():
             for prop in self.props.keys():
                 self.pGrid[pt][prop] = np.interp(Tgrid[pt], self.props[prop][0, :], self.props[prop][1, :])
             
-#Check to see if it works before refactor.
+#Hmm doesn't quite work need T before 
+class HeatSimulation(object):
+    def __init__(self, specificDict):
+        self.parameter_dict = specificDict
+        self.mat = specificDict['mat']
+        self.ds = specificDict['ds']
+        self.dt = specificDict['dt']
+        self.Ti = specificDict['Ti'] + toK
+        self.Ta = specificDict['Ta'] + toK
+        self.h = specificDict['h']
+        self.ep = specificDict['ep']
+        self.Lx = specificDict['Lx'] 
+        self.Ly = specificDict['Ly'] 
+        self.Lz = specificDict['Lz'] 
+        self.tF = specificDict['tFinal']
+        self.tNow = 0.0 
+        self.Nx = int(Lx/ds)+1 
+        self.Ny = int(Ly/ds)+1 
+        self.Nz = int(Lz/ds)+1
+        self.Gx, self.Gz = np.meshgrid(np.arange(0,Lx+2.0*ds,ds), np.arange(0,Lz+2.0*ds,ds))
+        self.Tuno, self.fGrid = self.make_grid()
+        self.matProps = SolidProperties(self.mat, self.Tuno)
+
+    def make_grid(self):
+        return 0, 0
+    
+
 def initialize(specificDict):
     ds = specificDict['ds']
     Lx, Ly, Lz = specificDict['Lx'], specificDict['Ly'], specificDict['Lz'] 
     Nx, Ny, Nz = int(Lx/ds)+1, int(Ly/ds)+1, int(Lz/ds)+1
-    Gx, Gz = np.meshgrid(np.arange(0,Lx+2.0*ds,ds), 
-                                    np.arange(0,Lz+2.0*ds,ds))
+    Gx, Gz = np.meshgrid(np.arange(0,Lx+2.0*ds,ds), np.arange(0,Lz+2.0*ds,ds))
 
     dt = specificDict['dt']
-    Ti = specificDict['Ti']
-    Ta, h, ep = specificDict['Ta'], specificDict['h'], specificDict['ep']
+    Ti = specificDict['Ti'] + toK
+    Ta, h, ep = specificDict['Ta'] + toK, specificDict['h'], specificDict['ep']
     xf, yf = Nx, Ny
     xi, yi = 0, 0
     Tuno, fGrid = make_grid(xi, xf, yi, yf, 0, Ti, zFlag="B")
@@ -167,12 +193,14 @@ def initialize(specificDict):
     fGrid.update(ft)
 
     tnow = 0.0
-    yval = 0.05
+    yval = Ly/2
     Gsize = Gx.shape
     yplace = Gsize[1]//2
         
     matProps = SolidProperties(specificDict['mat'], Tuno)
     t = [time.time()]
+    print(Gsize, len(Tuno.keys()))
+
 
     while tnow < specificDict['tFinal']:
         Tdos = forward_call(Tuno, matProps.pGrid, fGrid, dt, ds, Ta, h, ep)
@@ -180,18 +208,20 @@ def initialize(specificDict):
         Tuno = forward_call(Tdos, matProps.pGrid, fGrid, dt, ds, Ta, h, ep)
 
         matProps.update_props(Tuno)
+
         tnow += dt*2.0
         t.append(time.time())
         print(tnow, t[-1]-t[-2])
 
-
     Zv = contourmaker(Tuno, Gx, yplace)
-    CS = plt.contour(Gx, Gz, Zv-toK, 10)
-    plt.title("t = {:.3f} s".format(tnow))
+    CS = plt.contour(Gx, Gz, Zv-toK, 5)
+    plt.title("yaxis = {:.3f}, t = {:.3f} s".format(yval, tnow))
+    plt.ylabel('Z axis')
+    plt.xlabel('X axis')
     plt.clabel(CS, inline=1, fontsize=10)
     plt.grid(True)
     plt.show()
-    
+
     return 'Yay'
 
 if __name__ == "__main__":

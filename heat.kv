@@ -16,13 +16,14 @@
     cursor_blink: True
     write_tab: False
     input_filter: 'float'
+    size_hint_x: .5
 
 <MyLabel@Label>:
     text_size: self.size
     font_size: '20sp'
     markup: True
     halign: 'right'
-    valign: 'middle'
+    valign: 'bottom'
     
 <TransientHeat>:
     orientation: 'vertical'
@@ -74,40 +75,33 @@
                 GridLayout:
                     cols: 2
                     rows: 1
-                    padding: 5
-                    spacing: 10
                     row_default_height: 30
                     row_force_default: True
 
                     MyLabel:
-                        text: 'T[sub]iniital[/sub] (C)'
+                        text: 'T_iniital (C)'
                     MyText:
                         id: Ti
                         text: '25'
-                        on_focus: None
+                    
 
 ## Tambient
                 GridLayout:
                     cols: 2
                     rows: 1
-                    padding: 5
-                    spacing: 10
                     row_default_height: 30
                     row_force_default: True
 
                     MyLabel:
-                        text: 'T[sub]ambient[/sub] (C)'
+                        text: 'T_ambient (C)'
                     MyText:
                         id: Ta
                         text: '200'
-                        on_focus: None
-                        ## sz.text = str(float(sz.text)*float(sz2.text))
+
 ## dt
                 GridLayout:
                     cols: 2
                     rows: 1
-                    padding: 5
-                    spacing: 10
                     row_default_height: 30
                     row_force_default: True
 
@@ -116,13 +110,11 @@
                     MyText:
                         id: dt
                         text: '0.001'
-                        on_focus: None
+
 ## Epsilon
                 GridLayout:
                     cols: 2
                     rows: 1
-                    padding: 5
-                    spacing: 10
                     row_default_height: 30
                     row_force_default: True
 
@@ -131,14 +123,11 @@
                     MyText:
                         id: ep
                         text: '0.05'
-                        on_focus: None
 
 ## h
                 GridLayout:
                     cols: 2
                     rows: 1
-                    padding: 5
-                    spacing: 10
                     row_default_height: 30
                     row_force_default: True
 
@@ -147,14 +136,11 @@
                     MyText:
                         id: h
                         text: '10'
-                        on_focus: None
 
 ## ds
                 GridLayout:
                     cols: 2
                     rows: 1
-                    padding: 5
-                    spacing: 10
                     row_default_height: 30
                     row_force_default: True
 
@@ -163,32 +149,27 @@
                     MyText:
                         id: ds
                         text: '0.005'
-                        on_focus: None
 
 ## q'''
                 GridLayout:
                     cols: 2
                     rows: 1
-                    padding: 5
-                    spacing: 10
                     row_default_height: 30
                     row_force_default: True
 
                     MyLabel:
-                        text: 'heat gen (W/m[sup]3[/sup])'
+                        text: 'heat gen [size=15sp](W/m[sup]3[/sup][/size])'
                     MyText:
-                        id: qVolS
+                        id: qVol
                         text: '0.0'
-                        on_focus: None
 
 ## tfinal
                 GridLayout:
                     cols: 2
                     rows: 1
-                    padding: 5
-                    spacing: 10
                     row_default_height: 30
                     row_force_default: True
+
                     MyLabel:
                         text: 't[sub]final[/sub] (s)'
                     MyText:
@@ -200,28 +181,28 @@
                 GridLayout:
                     cols: 6
                     rows: 1
-                    padding: 5
-                    spacing: 10
                     row_default_height: 30
                     row_force_default: True
+
                     MyLabel:
                         text: 'L'
                     MyText:
                         id: Lx
                         text: '0.2'
-                        on_focus: None
+                        size_hint_x: 1.25
+                       
                     MyLabel:
                         text: 'W'
                     MyText:
                         id: Ly
                         text: '0.2'
-                        on_focus: None
+                        size_hint_x: 1.25
                     MyLabel:
                         text: 'H'
                     MyText:
                         id: Lz
                         text: '0.5'
-                        on_focus: None
+                        size_hint_x: 1.25
                 
                 Spinner:
                     id: mat
@@ -229,6 +210,7 @@
                     values: root.mats
 
                 MyLabel:
+                    id: middle_label
                     text: "-------------------"
                     halign: "center"
 
@@ -258,13 +240,18 @@
         GridLayout:
             cols: 2
             rows: 1
+            valign: 'top'
+            padding: 5
+            spacing: 25
             Graph:
                 xlabel: "x"
                 ylabel: "y"
+                background_color: 1,1,1,.7
                 title: "Shape of item"
 
             Graph:
                 id: graphcontour
+                background_color: 1,1,1,.7
                 xlabel: "x"
                 ylabel: "z"
                 title: "Temperature (C)"
