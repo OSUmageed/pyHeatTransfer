@@ -13,6 +13,9 @@ import time
 import random
 from deco import concurrent, synchronized
 
+thispath = op.abspath(op.dirname(__file__))
+sys.path.append(thispath)
+
 import geometry as geo
 import SolidProp.PropertySI as sp
 import convection as cv
@@ -123,7 +126,7 @@ def forward_call(Tg_in, Pg, typD, dt, ds, Ta, h, ep, qVol=0.0):
 
 #could use scipy interpolate to do a spline.  This is limited to just linear.
 class SolidProperties(object):
-    def __init__(self, mat, Tgrid):
+    def __init__(self, mat, Tgrid={}):
         self.props = sp.get_props(mat)
         self.pGrid = collections.defaultdict(dict)
         self.update_props(Tgrid)
@@ -134,6 +137,15 @@ class SolidProperties(object):
             for prop in self.props.keys():
                 self.pGrid[pt][prop] = np.interp(Tgrid[pt], self.props[prop][0, :], self.props[prop][1, :])
             
+    def query_props(self, Temp):
+        Tget = Temp if isinstance(Temp, list) else [Temp]
+        out = collections.defaultdict(dict)
+        for T in Tget:
+            for prop in self.props.keys():
+                out[T][prop] = np.interp(T, self.props[prop][0, :], self.props[prop][1, :])
+
+        return out
+
 #Hmm doesn't quite work need T before 
 class HeatSimulation(object):
     def __init__(self, specificDict):
