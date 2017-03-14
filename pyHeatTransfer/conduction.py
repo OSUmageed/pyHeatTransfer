@@ -13,8 +13,10 @@ import time
 import random
 from deco import concurrent, synchronized
 
-thispath = op.abspath(op.dirname(__file__))
-sys.path.append(thispath)
+sourcepath = op.abspath(op.dirname(__file__))
+gitpath = op.dirname(sourcepath) #Top level of git repo
+os.chdir(sourcepath)
+sys.path.append(gitpath)
 
 import geometry as geo
 import SolidProp.PropertySI as sp

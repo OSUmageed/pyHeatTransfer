@@ -14,13 +14,17 @@ from kivy.properties import ListProperty
 from kivy.garden.graph import ContourPlot
 from kivy.uix.spinner import Spinner
 
+sourcepath = op.abspath(op.dirname(__file__))
+gitpath = op.dirname(sourcepath) #Top level of git repo
+os.chdir(sourcepath)
+sys.path.append(gitpath)
+
 import numpy as np
 import SolidProp.PropertySI as sp
 import conduction as cd
 import examples as ex
 
-thispath = op.abspath(op.dirname(__file__))
-solidpath = op.join(thispath, 'SolidProp')
+solidpath = op.join(gitpath, 'SolidProp')
 datapath = op.join(solidpath, 'PropData')
 
 MATERIALS = sp.prop_names()
