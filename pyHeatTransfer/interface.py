@@ -32,6 +32,7 @@ MATERIALS = sp.prop_names()
 class TransientHeat(BoxLayout):
 
     mats = MATERIALS
+    toK = 273.15
 
     def __init__(self,):
         super(TransientHeat, self).__init__()
@@ -41,17 +42,34 @@ class TransientHeat(BoxLayout):
     def start(self):
         #Plot should be somewhere else
         self.ids.graphcontour.add_plot(self.plot)
+
         for i in self.ids.keys():
             if 'graph' not in i:
                 try:
                     self.parameter_dict[i] = float(self.ids[i].text)
                 except:
                     self.parameter_dict[i] = self.ids[i].text
+            
+        #Test Part
+        cd.initialize_class(self.parameter_dict)
 
-        print(cd.initialize(self.parameter_dict))
-        raise SystemExit
+        # self.sim = cd.HeatSimulation(self.parameter_dict)
+        # self.yplane = float(self.ids.Ly.text)//2
 
+        # #Until here this part should be on focus (ish) and it should produce a 3D figure in the first plot.  
 
+        # #Now this should be the 'start' function.  It uses the methods of self.sim which is already instantiated, to advance the simulation and it should contain a loop, but we want pause to be able to interrupt it.
+
+        # #self.plot.xrange = self.sim.xrng 
+        # #self.plot.yrange = self.sim.yrng
+        # while self.sim.tNow < self.sim.tF:
+        #     self.sim.step_forward()
+        #     self.sim.plot_step(self.yplane)
+        #     self.plot.data = self.sim.pPlot
+        #     self.ids.middle_label.text = str(self.sim.tNow)
+        #     self.plot.draw()
+            
+        
     def pause(self):
         pass
         

@@ -10,8 +10,7 @@ from setuptools import setup, find_packages
 # To use a consistent encoding
 from codecs import open
 from os import path
-import subprocess as sp
-import shlex
+
 
 here = path.abspath(path.dirname(__file__))
 
@@ -81,8 +80,3 @@ setup(
         ],
     },
 )
-
-strs = "garden install graph"
-execs = shlex.split(strs)
-proc = sp.Popen(execs)
-sp.Popen.wait(proc)
