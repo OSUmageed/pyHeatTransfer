@@ -5,8 +5,7 @@ import sys
 sourcepath = op.abspath(op.dirname(__file__))
 sys.path.append(sourcepath)
 
-from interface import HeatApp
-
 def main():
+    from interface import HeatApp
     HeatApp().run()
     print('Closed pyHeatTransferGUI')
